@@ -1,36 +1,62 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Kervzent Studio
 
-## Getting Started
+Marketing site for Kervzent Studio — a software studio building websites, mobile
+applications, and AI systems.
 
-First, run the development server:
+## Stack
+
+- **Next.js 16** (App Router, Turbopack) — fully static, every route prerendered
+- **React 19**
+- **Tailwind CSS v4** — design tokens declared in `@theme`, no config file
+- **TypeScript**
+
+## Getting started
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The site runs at http://localhost:3000.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Command         | Purpose                      |
+| --------------- | ---------------------------- |
+| `npm run dev`   | Dev server with Fast Refresh |
+| `npm run build` | Production build             |
+| `npm start`     | Serve the production build    |
+| `npm run lint`  | ESLint                       |
 
-## Learn More
+## Structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+src/app/
+  _components/     UI components (private folder, not routable)
+  _lib/            Site content, copy, and URL resolution
+  globals.css      Design tokens, keyframes, base styles
+  layout.tsx       Root layout: fonts, metadata, header, footer
+  page.tsx         Home — composes the five sections
+  about/, product/ Placeholder pages
+docs/              Documentation
+audit/             Security audit reports
+public/videos/     Hero background video
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Documentation
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Full reference lives in [`docs/`](./docs/README.md):
 
-## Deploy on Vercel
+| Document                                      | Covers                                            |
+| --------------------------------------------- | ------------------------------------------------- |
+| [Architecture](./docs/architecture.md)        | Rendering model, file layout, component map       |
+| [Design system](./docs/design-system.md)      | Colour, type scale, tokens, custom variants       |
+| [Animations](./docs/animations.md)            | Page intro/exit, scroll locks, hover scramble     |
+| [Content guide](./docs/content-guide.md)      | Editing copy, adding a page                       |
+| [Deployment](./docs/deployment.md)            | Environment, domain, verification, launch checks  |
+| [Security](./docs/security.md)                | Headers, CSP rationale, audit results             |
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Before going public
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The site carries placeholder content and an oversized hero video. See the
+[pre-launch checklist](./docs/deployment.md#pre-launch-checklist).

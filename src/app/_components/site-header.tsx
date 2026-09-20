@@ -1,0 +1,235 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { Glyph, Wordmark } from "./marks";
+import { ScrambleAction } from "./scramble-action";
+import {
+  contactLink,
+  introRoutes,
+  navLinks,
+  serviceLinks,
+} from "../_lib/content";
+
+/* Long enough for the strip to clear and the nav to finish sliding out. */
+const EXIT_MS = 550;
+const AT_TOP_EPSILON = 2;
+const SCROLL_SETTLE_MAX_MS = 900;
+
+function subscribeToScroll(onChange: () => void) {
+  window.addEventListener("scroll", onChange, { passive: true });
+  return () => window.removeEventListener("scroll", onChange);
+}
+
+function useIsAtTop() {
+  return useSyncExternalStore(
+    subscribeToScroll,
+    () => window.scrollY <= 8,
+    () => true,
+  );
+}
+
+export function SiteHeader() {
+  const [open, setOpen] = useState(false);
+  const [leaving, setLeaving] = useState(false);
+  const [lastPath, setLastPath] = useState<string | null>(null);
+  const atTop = useIsAtTop();
+  const pathname = usePathname();
+  const router = useRouter();
+  const exitTimer = useRef(0);
+  const scrollPoll = useRef(0);
+  const scrollFallback = useRef(0);
+
+  // Every intro route flips [data-intro="ready"] when its sequence finishes.
+  // Routes without one (error, not-found) have nothing to wait for, so the
+  // header skips the gate there rather than hiding its nav forever.
+  const runsIntro = introRoutes.includes(pathname);
+
+  // End the exit the moment a new route commits. Adjusting state during render
+  // is React's pattern for this — an effect would repaint the stale frame
+  // first, and deriving it from the route we left kept the header stuck when
+  // that same route was visited again later.
+  if (pathname !== lastPath) {
+    setLastPath(pathname);
+    if (leaving) setLeaving(false);
+  }
+
+  useEffect(() => {
+    window.clearTimeout(exitTimer.current);
+    window.clearInterval(scrollPoll.current);
+    window.clearTimeout(scrollFallback.current);
+    delete document.documentElement.dataset.exitLock;
+    delete document.documentElement.dataset.exiting;
+  }, [pathname]);
+
+  const startExit =
+    (href: string) => (event: React.MouseEvent<HTMLElement>) => {
+      setOpen(false);
+
+      const sameDestination = href === pathname;
+      const isAnchor = href.startsWith("/#");
+      const modified =
+        event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
+
+      // `leaving` guards against a second click landing mid-exit, which would
+      // otherwise orphan the running timers and fire two navigations.
+      if (leaving || !runsIntro || sameDestination || isAnchor || modified) {
+        return;
+      }
+
+      event.preventDefault();
+
+      // A click during the scroll-to-top wait lands before `leaving` is set,
+      // so drop any in-flight timers rather than letting two runs overlap.
+      window.clearInterval(scrollPoll.current);
+      window.clearTimeout(scrollFallback.current);
+
+      const beginExit = () => {
+        setLeaving(true);
+        document.documentElement.dataset.exitLock = "";
+        // Page content watches this to run its intro backwards.
+        document.documentElement.dataset.exiting = "";
+        exitTimer.current = window.setTimeout(() => router.push(href), EXIT_MS);
+      };
+
+      if (window.scrollY <= AT_TOP_EPSILON) {
+        beginExit();
+        return;
+      }
+
+      // Ride back to the top first. The exit animation lives at the top of the
+      // page, so starting it from further down would play it off screen. The
+      // scroll has to finish before the lock lands, or it would be frozen
+      // mid-way — hence waiting rather than locking straight away.
+      const smooth = !window.matchMedia("(prefers-reduced-motion: reduce)")
+        .matches;
+      window.scrollTo({ top: 0, behavior: smooth ? "smooth" : "instant" });
+
+      const settle = () => {
+        window.clearInterval(scrollPoll.current);
+        window.clearTimeout(scrollFallback.current);
+        // Snap to the top before locking. If the cap below won the race the
+        // smooth scroll is still mid-flight, and the lock would otherwise
+        // freeze the page part-way up. Must be "instant" — "auto" defers to
+        // the CSS scroll-behavior, which is smooth, so it would animate again.
+        window.scrollTo({ top: 0, behavior: "instant" });
+        beginExit();
+      };
+
+      scrollPoll.current = window.setInterval(() => {
+        if (window.scrollY <= AT_TOP_EPSILON) settle();
+      }, 50);
+      // Smooth scrolling has no reliable completion signal across browsers, so
+      // cap the wait rather than risk stalling the navigation.
+      scrollFallback.current = window.setTimeout(settle, SCROLL_SETTLE_MAX_MS);
+    };
+
+  // Entry runs nav first, then the strip. Exit reverses that: the strip clears
+  // before the nav slides away, so the two don't leave at once.
+  const stripReveal = leaving
+    ? "opacity-0 duration-300 delay-0"
+    : runsIntro
+      ? "intro-ready:opacity-100 opacity-0 duration-700 delay-200"
+      : "opacity-100 duration-700 delay-200";
+  const navReveal = leaving
+    ? "-translate-y-[200%] duration-400 delay-150"
+    : runsIntro
+      ? "intro-ready:translate-y-0 -translate-y-[200%] duration-700 delay-0"
+      : "translate-y-0 duration-700 delay-0";
+
+  return (
+    <header className="fixed inset-x-0 top-0 z-40 px-5 pt-3">
+      <div
+        inert={!atTop}
+        className={`mx-auto w-full max-w-400 overflow-hidden transition-all duration-300 ease-out max-lg:hidden ${
+          atTop ? "max-h-12 opacity-100" : "max-h-0 opacity-0"
+        }`}
+      >
+        <div
+          className={`${stripReveal} flex items-center gap-6 pb-3 transition-opacity ease-out`}
+        >
+          {serviceLinks.map((link, index) => (
+            <div key={link.name} className="flex items-center gap-6">
+              {index > 0 && (
+                <div className="h-6 w-px bg-on-surface/60" aria-hidden />
+              )}
+              <Link
+                href={link.href}
+                className="flex items-center gap-1.5 opacity-60 transition-opacity hover:opacity-100"
+              >
+                <Glyph id={link.glyph} className="h-4 w-4" />
+                <span className="text-label tracking-tight">{link.name}</span>
+              </Link>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <nav
+        aria-label="Main"
+        className={`${navReveal} mx-auto flex w-full max-w-400 items-center gap-10 rounded-md border border-outline/60 bg-surface-tint p-4 backdrop-blur-xl transition-transform ease-out lg:p-5`}
+      >
+        <Link href="/" className="shrink-0" aria-label="Kervzent Studio home">
+          <Wordmark />
+        </Link>
+
+        <div className="ml-auto flex items-center gap-8 max-lg:hidden">
+          {navLinks.map((link) => (
+            <ScrambleAction
+              key={link.label}
+              href={link.href}
+              label={link.label}
+              onClick={startExit(link.href)}
+              className="text-body font-mono opacity-70 transition-opacity hover:opacity-100"
+            />
+          ))}
+          <ScrambleAction
+            href={contactLink.href}
+            label={contactLink.label}
+            className="bg-primary px-10 py-3 font-mono text-body transition-colors hover:bg-primary-pressed"
+          />
+        </div>
+
+        <button
+          type="button"
+          onClick={() => setOpen((value) => !value)}
+          aria-expanded={open}
+          aria-controls="mobile-menu"
+          className="ml-auto flex h-8 w-8 flex-col items-center justify-center gap-1.5 lg:hidden"
+        >
+          <span className="sr-only">{open ? "Close menu" : "Open menu"}</span>
+          <span
+            className={`h-px w-6 bg-on-surface transition-transform duration-300 ${open ? "translate-y-[3.5px] rotate-45" : ""}`}
+          />
+          <span
+            className={`h-px w-6 bg-on-surface transition-transform duration-300 ${open ? "-translate-y-[3.5px] -rotate-45" : ""}`}
+          />
+        </button>
+      </nav>
+
+      {open && (
+        <div
+          id="mobile-menu"
+          className="mx-auto mt-2 flex w-full max-w-400 flex-col gap-5 rounded-md border border-outline/60 bg-surface/90 p-5 backdrop-blur-xl lg:hidden"
+        >
+          {navLinks.map((link) => (
+            <ScrambleAction
+              key={link.label}
+              href={link.href}
+              label={link.label}
+              onClick={startExit(link.href)}
+              className="text-body-lg font-mono opacity-80"
+            />
+          ))}
+          <ScrambleAction
+            href={contactLink.href}
+            label={contactLink.label}
+            onClick={() => setOpen(false)}
+            className="bg-primary px-10 py-3 text-center font-mono text-body"
+          />
+        </div>
+      )}
+    </header>
+  );
+}

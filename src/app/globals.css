@@ -1,26 +1,206 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --color-surface: #000000;
+  --color-on-surface: #fdfcf4;
+  --color-primary: #ff5623;
+  --color-primary-pressed: #f35422;
+  --color-outline: rgb(255 255 255 / 0.2);
+  --color-surface-tint: rgb(255 255 255 / 0.05);
+
+  --radius-md: 6px;
+
+  /* DESIGN.md pairs the largest steps with 1.5 line-heights, but flags those
+     pairings as inferred rather than measured — display type is set solid. */
+  --text-display: clamp(2.75rem, 7.5vw, 3.75rem);
+  --text-display--line-height: 0.95;
+  --text-display--letter-spacing: -0.025em;
+
+  --text-headline-lg: clamp(2.25rem, 5.5vw, 3.75rem);
+  --text-headline-lg--line-height: 1;
+  --text-headline-lg--letter-spacing: -0.025em;
+
+  --text-headline-md: clamp(2rem, 4.5vw, 3rem);
+  --text-headline-md--line-height: 1;
+  --text-headline-md--letter-spacing: -0.025em;
+
+  --text-headline-sm: clamp(1.75rem, 5vw, 2.75rem);
+  --text-headline-sm--line-height: 1;
+  --text-headline-sm--letter-spacing: -0.025em;
+
+  --text-title: 1.25rem;
+  --text-title--line-height: 1.2;
+
+  --text-body-lg: 1.125rem;
+  --text-body-lg--line-height: 1.556;
+  --text-body-lg--letter-spacing: -0.0167em;
+
+  --text-body: 1rem;
+  --text-body--line-height: 1.5;
+
+  --text-label: 0.75rem;
+  --text-label--line-height: 1.333;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-kervzent-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-kervzent-mono), ui-monospace, SFMono-Regular, monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* Hero intro choreography: title → marks → marks split apart + description →
+   background video. The nav waits on [data-intro="ready"], set once the video
+   can actually play, so it never arrives before the footage it sits over. */
+@theme {
+  --animate-title-in: fade-in 900ms ease-out both;
+  /* The description is collapsed to zero height until it appears, so the frame
+     (and the marks centred on it) line up with the title alone. Expanding it
+     lifts the title into its final position. */
+  --animate-desc-expand: desc-expand 900ms cubic-bezier(0.16, 1, 0.3, 1) 1300ms
+    both;
+  --animate-desc-in: fade-in 700ms ease-out 1500ms both;
+  --animate-mark-top:
+    fade-in 500ms ease-out 700ms both,
+    split-to-top 900ms cubic-bezier(0.16, 1, 0.3, 1) 1300ms both;
+  --animate-mark-bottom:
+    fade-in 500ms ease-out 700ms both,
+    split-to-bottom 900ms cubic-bezier(0.16, 1, 0.3, 1) 1300ms both;
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  /* Exit: the intro run backwards, fast enough to finish inside EXIT_MS
+     before the route swaps. */
+  --animate-fade-out: fade-out 400ms ease-in both;
+  --animate-desc-collapse: desc-collapse 400ms cubic-bezier(0.7, 0, 0.84, 0)
+    both;
+  --animate-mark-merge-top:
+    merge-from-top 400ms cubic-bezier(0.7, 0, 0.84, 0) both,
+    fade-out 220ms ease-in 220ms both;
+  --animate-mark-merge-bottom:
+    merge-from-bottom 400ms cubic-bezier(0.7, 0, 0.84, 0) both,
+    fade-out 220ms ease-in 220ms both;
+
+  @keyframes fade-out {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+
+  @keyframes merge-from-top {
+    from {
+      top: 0;
+    }
+    to {
+      top: calc(50% - 15px);
+    }
+  }
+
+  @keyframes merge-from-bottom {
+    from {
+      bottom: 0;
+    }
+    to {
+      bottom: calc(50% - 15px);
+    }
+  }
+
+  @keyframes desc-collapse {
+    from {
+      grid-template-rows: 1fr;
+    }
+    to {
+      grid-template-rows: 0fr;
+    }
+  }
+
+  @keyframes desc-expand {
+    from {
+      grid-template-rows: 0fr;
+    }
+    to {
+      grid-template-rows: 1fr;
+    }
+  }
+
+  @keyframes split-to-top {
+    from {
+      top: calc(50% - 15px);
+    }
+    to {
+      top: 0;
+    }
+  }
+
+  @keyframes split-to-bottom {
+    from {
+      bottom: calc(50% - 15px);
+    }
+    to {
+      bottom: 0;
+    }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@custom-variant intro-ready (&:where(html[data-intro="ready"] *));
+/* No :where() here on purpose — the exit animation has to outrank the entry
+   animation already sitting on the same element. */
+@custom-variant exiting (html[data-exiting] &);
+
+@utility bg-grid {
+  background-image:
+    linear-gradient(to right, rgb(255 255 255 / 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(255 255 255 / 0.05) 1px, transparent 1px);
+  background-size: 80px 80px;
+}
+
+@layer base {
+  html {
+    background-color: var(--color-surface);
+    color: var(--color-on-surface);
+    scroll-behavior: smooth;
+    /* Reserve the scrollbar track so locking/unlocking doesn't shift layout. */
+    scrollbar-gutter: stable;
+  }
+
+  /* intro-lock is held by the hero while its opening sequence plays; exit-lock
+     by the header while it animates out on the way to another page. Separate
+     attributes so neither can clear the other's lock. Both are applied from JS
+     rather than the server, so a failed bundle can't strand the page. */
+  html[data-intro-lock],
+  html[data-exit-lock] {
+    overflow: hidden;
+  }
+
+  ::selection {
+    background-color: var(--color-primary);
+    color: var(--color-on-surface);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-delay: 0ms !important;
+      animation-iteration-count: 1 !important;
+    }
+  }
 }
