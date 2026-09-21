@@ -3,6 +3,29 @@ import type { NextConfig } from "next";
 const isDev = process.env.NODE_ENV === "development";
 
 /**
+ * The contact form posts cross-origin to whatever form service is configured,
+ * so that origin has to be allowed explicitly — `connect-src 'self'` alone
+ * blocks the submission, and the form surfaces only a generic error when it
+ * does. Derived from the same variable the form reads, so the header and the
+ * request cannot drift apart. Never widen this to `*`.
+ */
+function contactOrigin(): string {
+  const value = process.env.NEXT_PUBLIC_CONTACT_ENDPOINT;
+  if (!value) return "";
+  try {
+    return new URL(value).origin;
+  } catch {
+    throw new Error(
+      `NEXT_PUBLIC_CONTACT_ENDPOINT is not a valid absolute URL: "${value}". ` +
+        "Expected something like https://formspree.io/f/xxxxxxx",
+    );
+  }
+}
+
+const contact = contactOrigin();
+const allowContact = contact ? ` ${contact}` : "";
+
+/**
  * `unsafe-inline` in script-src is required: the App Router inlines RSC payload
  * and bootstrap scripts, and the nonce-based alternative needs middleware,
  * which would force every route to render dynamically and lose the static
@@ -17,10 +40,12 @@ const contentSecurityPolicy = [
   "img-src 'self' data: blob:",
   "media-src 'self'",
   "font-src 'self'",
-  `connect-src 'self'${isDev ? " ws: wss:" : ""}`,
+  `connect-src 'self'${allowContact}${isDev ? " ws: wss:" : ""}`,
   "frame-ancestors 'none'",
   "base-uri 'self'",
-  "form-action 'self'",
+  // Also covers the form's no-JS fallback, which posts natively to the same
+  // endpoint rather than letting the browser put fields in the URL.
+  `form-action 'self'${allowContact}`,
   "object-src 'none'",
   // Would try to upgrade http://localhost during development.
   ...(isDev ? [] : ["upgrade-insecure-requests"]),
