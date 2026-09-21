@@ -10,7 +10,7 @@ import {
   introRoutes,
   navLinks,
   serviceLinks,
-} from "../_lib/content";
+} from "../../_lib/content/navigation";
 
 /* Long enough for the strip to clear and the nav to finish sliding out. */
 const EXIT_MS = 550;
@@ -62,6 +62,16 @@ export function SiteHeader() {
     delete document.documentElement.dataset.exitLock;
     delete document.documentElement.dataset.exiting;
   }, [pathname]);
+
+  // The mobile menu covers the viewport, so the page behind it shouldn't scroll.
+  useEffect(() => {
+    const html = document.documentElement;
+    if (open) html.dataset.menuLock = "";
+    else delete html.dataset.menuLock;
+    return () => {
+      delete html.dataset.menuLock;
+    };
+  }, [open]);
 
   const startExit =
     (href: string) => (event: React.MouseEvent<HTMLElement>) => {
@@ -168,7 +178,10 @@ export function SiteHeader() {
 
       <nav
         aria-label="Main"
-        className={`${navReveal} mx-auto flex w-full max-w-400 items-center gap-10 rounded-md border border-outline/60 bg-surface-tint p-4 backdrop-blur-xl transition-transform ease-out lg:p-5`}
+        /* The glass panel is desktop-only. On mobile the header sits directly
+           on the page, and on the full-screen menu it reads as part of the
+           overlay rather than floating over it. */
+        className={`${navReveal} relative z-40 mx-auto flex w-full max-w-400 items-center gap-10 rounded-md p-4 transition-transform ease-out lg:border lg:border-outline/60 lg:bg-surface-tint lg:p-5 lg:backdrop-blur-xl`}
       >
         <Link href="/" className="shrink-0" aria-label="Kervzent Studio home">
           <Wordmark />
@@ -199,11 +212,12 @@ export function SiteHeader() {
           className="ml-auto flex h-8 w-8 flex-col items-center justify-center gap-1.5 lg:hidden"
         >
           <span className="sr-only">{open ? "Close menu" : "Open menu"}</span>
+          {/* Open state collapses the two bars into a single dash. */}
           <span
-            className={`h-px w-6 bg-on-surface transition-transform duration-300 ${open ? "translate-y-[3.5px] rotate-45" : ""}`}
+            className={`h-px w-6 bg-on-surface transition-transform duration-300 ${open ? "translate-y-[3.5px]" : ""}`}
           />
           <span
-            className={`h-px w-6 bg-on-surface transition-transform duration-300 ${open ? "-translate-y-[3.5px] -rotate-45" : ""}`}
+            className={`h-px w-6 bg-on-surface transition-transform duration-300 ${open ? "-translate-y-[3.5px]" : ""}`}
           />
         </button>
       </nav>
@@ -211,23 +225,46 @@ export function SiteHeader() {
       {open && (
         <div
           id="mobile-menu"
-          className="mx-auto mt-2 flex w-full max-w-400 flex-col gap-5 rounded-md border border-outline/60 bg-surface/90 p-5 backdrop-blur-xl lg:hidden"
+          /* Sits below the header's z-40 so the logo and close button stay on
+             top of it. */
+          className="fixed inset-0 z-30 flex flex-col overflow-y-auto bg-surface px-5 pb-10 pt-32 lg:hidden"
         >
-          {navLinks.map((link) => (
-            <ScrambleAction
-              key={link.label}
-              href={link.href}
-              label={link.label}
-              onClick={startExit(link.href)}
-              className="text-body-lg font-mono opacity-80"
-            />
-          ))}
+          <nav
+            aria-label="Mobile"
+            className="flex flex-col items-center gap-8 pt-6"
+          >
+            {navLinks.map((link) => (
+              <ScrambleAction
+                key={link.label}
+                href={link.href}
+                label={link.label}
+                onClick={startExit(link.href)}
+                className="font-mono text-title tracking-tight"
+              />
+            ))}
+          </nav>
+
           <ScrambleAction
             href={contactLink.href}
             label={contactLink.label}
             onClick={() => setOpen(false)}
-            className="bg-primary px-10 py-3 text-center font-mono text-body"
+            className="mt-12 w-full bg-primary py-4 text-center font-mono text-body transition-colors hover:bg-primary-pressed"
           />
+
+          <ul className="mt-12 flex flex-col items-center gap-8">
+            {serviceLinks.map((link) => (
+              <li key={link.name}>
+                <Link
+                  href={link.href}
+                  onClick={() => setOpen(false)}
+                  className="flex items-center gap-3 text-on-surface/60 transition-colors hover:text-on-surface"
+                >
+                  <Glyph id={link.glyph} className="h-6 w-6" />
+                  <span className="text-title tracking-tight">{link.name}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
       )}
     </header>

@@ -1,4 +1,4 @@
-import { clients } from "../_lib/content";
+import { clients } from "../../_lib/content/shared";
 
 export function Clients() {
   return (

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { JetBrains_Mono, Space_Grotesk } from "next/font/google";
-import { SiteFooter } from "./_components/site-footer";
-import { SiteHeader } from "./_components/site-header";
+import { SiteFooter } from "./_components/shared/site-footer";
+import { SiteHeader } from "./_components/shared/site-header";
 import { siteUrl } from "./_lib/site-url";
 import "./globals.css";
 

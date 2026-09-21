@@ -1,5 +1,5 @@
 import { CountUp } from "./count-up";
-import { stats } from "../_lib/content";
+import { stats } from "../../_lib/content/home";
 
 export function Stats() {
   return (

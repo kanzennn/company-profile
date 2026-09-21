@@ -25,7 +25,7 @@ export function ContactCta() {
             plan.
           </p>
           <ScrambleAction
-            href="mailto:hello@kervzent.com"
+            href="/contact"
             label="Contact"
             className="bg-primary px-10 py-3 font-mono text-body transition-colors hover:bg-primary-pressed"
           />

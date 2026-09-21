@@ -1,4 +1,4 @@
-import type { GlyphId } from "../_lib/content";
+import type { GlyphId } from "../../_lib/content/types";
 
 const paths: Record<GlyphId, React.ReactNode> = {
   kervzent: (

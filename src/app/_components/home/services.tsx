@@ -1,6 +1,6 @@
-import { CornerMarks, Glyph } from "./marks";
-import { ScrambleAction } from "./scramble-action";
-import { customWork, services } from "../_lib/content";
+import { CornerMarks, Glyph } from "../shared/marks";
+import { ScrambleAction } from "../shared/scramble-action";
+import { customWork, services } from "../../_lib/content/home";
 
 function CardBackdrop({ tint }: { tint: string }) {
   return (

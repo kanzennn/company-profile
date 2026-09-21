@@ -1,6 +1,6 @@
 import { Wordmark } from "./marks";
 import { ScrambleAction } from "./scramble-action";
-import { footerLegal, footerNav, footerSocial } from "../_lib/content";
+import { footerLegal, footerNav, footerSocial } from "../../_lib/content/navigation";
 
 export function SiteFooter() {
   return (

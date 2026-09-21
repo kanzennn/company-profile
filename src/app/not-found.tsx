@@ -1,4 +1,4 @@
-import { ScrambleAction } from "./_components/scramble-action";
+import { ScrambleAction } from "./_components/shared/scramble-action";
 
 export default function NotFound() {
   return (

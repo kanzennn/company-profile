@@ -176,7 +176,8 @@
      attributes so neither can clear the other's lock. Both are applied from JS
      rather than the server, so a failed bundle can't strand the page. */
   html[data-intro-lock],
-  html[data-exit-lock] {
+  html[data-exit-lock],
+  html[data-menu-lock] {
     overflow: hidden;
   }
 

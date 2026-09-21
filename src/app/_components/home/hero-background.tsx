@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { useIntroGate } from "./use-intro-gate";
+import { useIntroGate } from "../shared/use-intro-gate";
 
 export function HeroBackground() {
   const videoRef = useRef<HTMLVideoElement>(null);
