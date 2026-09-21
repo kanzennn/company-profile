@@ -9,7 +9,7 @@ Route (app)
 ┌ ○ /
 ├ ○ /_not-found
 ├ ○ /about
-├ ○ /product
+├ ○ /studio
 ├ ○ /robots.txt
 └ ○ /sitemap.xml
 
@@ -34,14 +34,19 @@ This shapes two things worth keeping in mind:
 ```
 src/app/
   _components/          UI components (private — not routable)
+    shared/             Used by more than one page, plus site chrome
+    home/               Home-only sections
+    about/              /about-only sections
+    studio/             /studio-only sections
+    contact/            /contact-only sections
   _lib/
-    content.ts          All site copy and navigation data
+    content/            Site copy, one file per page
     site-url.ts         Absolute base URL resolution
   globals.css           Design tokens, keyframes, base styles
   layout.tsx            Root layout: fonts, metadata, header, footer
   page.tsx              Home — composes the five sections
-  about/page.tsx        Placeholder page
-  product/page.tsx      Placeholder page
+  about/page.tsx        About — story, timeline, team
+  studio/page.tsx       Studio — selected work
   error.tsx             Route error boundary (client)
   not-found.tsx         404 page
   robots.ts             Generated robots.txt
@@ -89,6 +94,28 @@ navigation, that state survives the route change. See
 | `Clients`       | `#clients`  | Logo wall                                               |
 | `ContactCta`    | `#contact`  | Closing call to action                                  |
 
+### Page sections (about)
+
+| Component          | Section id            | Notes                                       |
+| ------------------ | --------------------- | ------------------------------------------- |
+| `AboutCover`       | `#cover`              | Same treatment as the home hero              |
+| `AboutStory`       | `#how-we-got-here`, `#growth` | Two-column heading ∣ body blocks     |
+| `AboutBand`        | —                     | Reusable full-bleed `aspect-8/3` banner      |
+| `AboutTimeline`    | `#timeline`           | Milestone list                               |
+| `AboutHowWeWork`   | `#how-we-work`        | Pinned, scroll-stepped panel (client)        |
+| `AboutTeam`        | `#team`               | Monogram grid                                |
+| `AboutClosing`     | `#looking-ahead`      | Closing band with CTA                        |
+
+### Page sections (studio)
+
+| Component     | Section id | Notes                                       |
+| ------------- | ---------- | ------------------------------------------- |
+| `StudioCover` | `#cover`   | Same treatment as the home hero              |
+| `StudioWork`  | `#work`    | Six project cards, tinted gradient backdrops |
+
+`Stats`, `Clients` and `ContactCta` are reused across pages rather than
+duplicated.
+
 ### Shared chrome
 
 | Component     | Client? | Responsibility                                                     |
@@ -106,17 +133,21 @@ navigation, that state survives the route change. See
 | `hero-background`   | yes     | Video + gradient stack, runs the intro gate               |
 | `intro-backdrop`    | yes     | Gradient backdrop for pages without video                 |
 | `count-up`          | yes     | Number animation on scroll into view                      |
-| `under-development` | no      | Shared placeholder page body                              |
 | `marks.tsx`         | no      | `Glyph`, `Wordmark`, `CornerMark`, `CornerMarks` SVGs     |
 
-Eight client components total. Everything else is a Server Component.
+All of the above live in `_components/shared/`. A component used by exactly one
+page belongs in that page's folder; promote it to `shared/` only once a second
+page needs it.
+
+Nine client modules total (including `error.tsx` and `about-how-we-work`).
+Everything else is a Server Component.
 
 ## Data flow
 
 Content flows one way, from a single module:
 
 ```
-_lib/content.ts
+_lib/content/*
       │
       ├── SiteHeader      navLinks, serviceLinks, contactLink, introRoutes
       ├── SiteFooter      footerNav, footerSocial, footerLegal

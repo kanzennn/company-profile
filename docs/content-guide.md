@@ -1,28 +1,37 @@
 # Content guide
 
-Nearly all copy lives in `src/app/_lib/content.ts`. Components read from it —
-none hardcode text. Edit the data and every consumer updates.
+Nearly all copy lives in `src/app/_lib/content/`, **split one file per page** so
+it's obvious which one to open. Components read from it — none hardcode text.
 
-## What lives where
+## Which file to edit
 
-| Export           | Feeds                                          |
-| ---------------- | ---------------------------------------------- |
-| `serviceLinks`   | Header top strip (Web / Mobile / AI)           |
-| `navLinks`       | Header nav and mobile menu                     |
-| `contactLink`    | Header and mobile-menu CTA                     |
-| `introRoutes`    | Which routes run the intro animation           |
-| `stats`          | Count-up figures in the studio section         |
-| `services`       | The three service cards                        |
-| `customWork`     | The fourth "Something Else" card               |
-| `clients`        | Client logo wall                               |
-| `footerNav`      | Footer navigation column                       |
-| `footerSocial`   | Footer social column                           |
-| `footerLegal`    | Footer bottom bar                              |
+| File             | Covers                                                     |
+| ---------------- | ---------------------------------------------------------- |
+| `navigation.ts`  | Header nav, top strip, contact link, footer, `introRoutes` |
+| `home.ts`        | Stats, the three service cards, the "Something Else" card  |
+| `about.ts`       | Everything on `/about`                                      |
+| `studio.ts`      | Everything on `/studio`                                     |
+| `contact.ts`     | Everything on `/contact`, including the form fields        |
+| `shared.ts`      | Content reused on more than one page (the client wall)     |
+| `types.ts`       | The `GlyphId` union                                         |
 
-Copy **not** in this file: section headings and body paragraphs, which sit in
+There is deliberately **no barrel `index.ts`** — components import from the
+specific file (`_lib/content/about`), so the import line itself tells you where
+the copy lives.
+
+### Exports by file
+
+| File            | Exports                                                                              |
+| --------------- | ------------------------------------------------------------------------------------ |
+| `navigation.ts` | `serviceLinks`, `navLinks`, `contactLink`, `introRoutes`, `footerNav`, `footerSocial`, `footerLegal` |
+| `home.ts`       | `stats` *(placeholder)*, `services`, `customWork`                                     |
+| `about.ts`      | `aboutCover`, `aboutStory`, `aboutBand`, `timeline` *(placeholder)*, `howWeWork`, `team` *(placeholder)*, `aboutClosing` |
+| `studio.ts`     | `studioCover`, `projects` *(placeholder)*, `studioNote`                               |
+| `shared.ts`     | `clients` *(placeholder)*                                                             |
+
+Copy **not** in these files: section headings and body paragraphs, which sit in
 their section components (`hero.tsx`, `stats.tsx`, `services.tsx`,
-`clients.tsx`, `contact-cta.tsx`), and the placeholder page titles, which are
-props in `about/page.tsx` and `product/page.tsx`.
+`shared/clients.tsx`, `shared/contact-cta.tsx`).
 
 ## Common edits
 
@@ -32,7 +41,7 @@ props in `about/page.tsx` and `product/page.tsx`.
 export const navLinks = [
   { label: "Home", href: "/" },
   { label: "About", href: "/about" },
-  { label: "Product", href: "/product" },
+  { label: "Studio", href: "/studio" },
 ];
 ```
 
@@ -73,7 +82,7 @@ export const stats = [
 ```ts
 {
   name: "Web Development",
-  glyph: "web",                    // GlyphId — see marks.tsx
+  glyph: "web",                    // GlyphId — see shared/marks.tsx
   description: "…",
   href: "#contact",
   action: "Start a Project",
@@ -81,20 +90,22 @@ export const stats = [
 }
 ```
 
-`glyph` must be a key in the `paths` record in `_components/marks.tsx`. To add a
-new icon, add a path there and extend the `GlyphId` union in `content.ts`.
+`glyph` must be a key in the `paths` record in `_components/shared/marks.tsx`. To add a
+new icon, add a path there and extend the `GlyphId` union in `content/types.ts`.
 
 `tint` is the card's gradient hue. It's a raw hex rather than a token because
 it's decorative per-card variation, not a semantic colour role.
 
 ## Adding a page
 
-1. **Create the route.** The fastest start is copying an existing placeholder:
+1. **Create the route**, and a folder for its sections under `_components/`.
+   `studio/` is the smallest existing page to copy from:
 
 ```tsx
 // src/app/careers/page.tsx
 import type { Metadata } from "next";
-import { UnderDevelopment } from "../_components/under-development";
+import { CareersCover } from "../_components/careers/cover";
+import { ContactCta } from "../_components/shared/contact-cta";
 
 export const metadata: Metadata = {
   title: "Careers",                 // becomes "Careers — Kervzent Studio"
@@ -102,14 +113,23 @@ export const metadata: Metadata = {
 };
 
 export default function CareersPage() {
-  return <UnderDevelopment title="Join Kervzent" description="…" />;
+  return (
+    <main id="main" className="flex flex-1 flex-col gap-40 max-lg:gap-20">
+      <CareersCover />
+      <ContactCta />
+    </main>
+  );
 }
 ```
+
+Sections used by this page only go in `_components/careers/`. Reach into
+`_components/shared/` for anything already used elsewhere, and only move a
+component there once a second page actually needs it.
 
 2. **Register it in `introRoutes`** — this is the easy step to miss:
 
 ```ts
-export const introRoutes = ["/", "/about", "/product", "/careers"];
+export const introRoutes = ["/", "/about", "/studio", "/careers"];
 ```
 
 Forgetting it doesn't break the page. It just won't run the intro, and the
@@ -149,7 +169,7 @@ Absolute URLs resolve through `metadataBase` — see [Deployment](./deployment.m
 
 Drop the file at `public/videos/hero-background.mp4`. Anything in `public/` is
 served from the site root, so that path becomes `/videos/hero-background.mp4`,
-which is what `hero-background.tsx` references.
+which is what `home/hero-background.tsx` references.
 
 Keep it **short and small** — see [Deployment](./deployment.md#the-hero-video)
 for why the current file is a problem and how to compress it.

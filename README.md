@@ -32,12 +32,12 @@ The site runs at http://localhost:3000.
 
 ```
 src/app/
-  _components/     UI components (private folder, not routable)
+  _components/     UI components, grouped by page + shared/
   _lib/            Site content, copy, and URL resolution
   globals.css      Design tokens, keyframes, base styles
   layout.tsx       Root layout: fonts, metadata, header, footer
   page.tsx         Home — composes the five sections
-  about/, product/ Placeholder pages
+  about/, studio/  About and Studio pages
 docs/              Documentation
 audit/             Security audit reports
 public/videos/     Hero background video

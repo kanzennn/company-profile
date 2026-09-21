@@ -19,13 +19,13 @@ thing actually works and why it is built the way it is.
 
 A **fully static** Next.js 16 marketing site. Every route prerenders to HTML at
 build time — no database, no API routes, no server actions, no authentication.
-Content lives in one TypeScript file, styling runs entirely on Tailwind v4
+Copy is split one file per page, styling runs entirely on Tailwind v4
 theme tokens, and the distinctive part of the build is a coordinated page
 intro/exit animation system driven by four `<html>` data attributes.
 
 ## Conventions worth knowing up front
 
-**Content is data, not markup.** Copy lives in `src/app/_lib/content.ts`, not
+**Content is data, not markup.** Copy lives in `src/app/_lib/content/`, one file per page, not
 inside components. Edit it there and every consumer updates.
 
 **Use semantic tokens, never raw values.** Write `bg-primary` and `text-display`

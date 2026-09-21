@@ -14,7 +14,7 @@ Route (app)
 ┌ ○ /
 ├ ○ /_not-found
 ├ ○ /about
-├ ○ /product
+├ ○ /studio
 ├ ○ /robots.txt
 └ ○ /sitemap.xml
 ```
@@ -98,7 +98,7 @@ exit transition.
 
 ## The hero video
 
-`public/videos/hero-background.mp4` is roughly **59 MB** — the single largest
+`public/videos/hero-background.mp4` is roughly **21 MB** — still the largest
 performance liability in the project, and worth fixing before launch.
 
 It loads at the very top of the page, so it directly hurts Largest Contentful
@@ -123,7 +123,7 @@ whole opening sequence noticeably snappier.
 
 ### Committing it to git
 
-At 59 MB this is also a repository problem. Git history is permanent — removing
+At 21 MB this is also a repository consideration. Git history is permanent — removing
 a large blob later means rewriting history for everyone, and GitHub warns above
 50 MB and hard-blocks at 100 MB. Compress it first, or use Git LFS, or host it
 externally and reference the URL.
@@ -136,7 +136,7 @@ Confirm you hold the rights to any footage you ship.
 - [ ] Placeholder `stats` figures replaced with real numbers
 - [ ] Placeholder `clients` names replaced or the section removed
 - [ ] LinkedIn and X URLs filled in (`footerSocial`)
-- [ ] `hello@kervzent.com` in `contact-cta.tsx` is a real, monitored mailbox
+- [ ] `hello@kervzent.com` in `shared/contact-cta.tsx` is a real, monitored mailbox
 - [ ] Privacy Policy and Terms links resolved or removed (`footerLegal`)
 - [ ] `favicon.ico` replaced with Kervzent branding
 - [ ] Open Graph image added (drop `opengraph-image.png` in `src/app/`)

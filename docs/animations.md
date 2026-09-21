@@ -207,7 +207,7 @@ them to watch.
 
 ## Adding animation to a new page
 
-1. Add the route to `introRoutes` in `_lib/content.ts`
+1. Add the route to `introRoutes` in `_lib/content/navigation.ts`
 2. Render `<IntroBackdrop />` (or `<HeroBackground />` for video)
 3. Apply the animation classes to your content:
 
@@ -225,5 +225,5 @@ them to watch.
 </div>
 ```
 
-The simplest path is copying `under-development.tsx`, which is already wired
-correctly.
+The simplest path is copying `_components/studio/cover.tsx`, which is already
+wired correctly and is the smallest example.
