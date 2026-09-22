@@ -144,6 +144,12 @@ navigation, that state survives the route change. See
 | `StudioCover` | `#cover`   | Same treatment as the home hero              |
 | `StudioWork`  | `#work`    | Six project cards, tinted gradient backdrops |
 
+### Page sections (contact)
+
+| Component     | Notes                                                        |
+| ------------- | ------------------------------------------------------------ |
+| `ContactForm` | Posts to the configured endpoint, falls back to `mailto` (client) |
+
 `Stats`, `Clients` and `ContactCta` are reused across pages rather than
 duplicated.
 
@@ -156,22 +162,29 @@ duplicated.
 
 ### Building blocks
 
-| Module              | Client? | Responsibility                                            |
-| ------------------- | ------- | --------------------------------------------------------- |
-| `use-intro-gate.ts` | yes     | Intro timing, scroll lock, `data-intro` flag              |
-| `use-scramble.ts`   | yes     | Hover text scramble animation                             |
-| `scramble-action`   | yes     | Polymorphic CTA — link, external link, or button          |
-| `hero-background`   | yes     | Video + gradient stack, runs the intro gate               |
-| `intro-backdrop`    | yes     | Gradient backdrop for pages without video                 |
-| `count-up`          | yes     | Number animation on scroll into view                      |
-| `marks.tsx`         | no      | `Glyph`, `Wordmark`, `CornerMark`, `CornerMarks` SVGs     |
+| Module              | Lives in              | Client? | Responsibility                                       |
+| ------------------- | --------------------- | ------- | ---------------------------------------------------- |
+| `use-intro-gate.ts` | `components/ui`       | yes     | Intro timing, scroll lock, `data-intro` flag         |
+| `use-scramble.ts`   | `components/ui`       | yes     | Hover text scramble animation                        |
+| `ScrambleAction`    | `components/ui`       | yes     | Polymorphic CTA — link, external link, or button     |
+| `IntroBackdrop`     | `components/ui`       | yes     | Gradient backdrop for pages without video            |
+| `CountUp`           | `components/ui`       | yes     | Number animation on scroll into view                 |
+| `Marks.tsx`         | `components/ui`       | no      | `Glyph`, `CornerMark`, `CornerMarks` SVGs, plus `Wordmark` |
+| `HeroBackground`    | `app/(home)/_components` | yes  | Video + gradient stack, runs the intro gate          |
 
-All of the above live under `src/components/`. A component used by exactly one
-page belongs in that route's `_components/`; promote it only once a second page
-needs it.
+`HeroBackground` is the odd one out: only the home hero uses it, so it stays
+with home rather than in `src/components/`. That is the rule — a component used
+by exactly one page belongs in that route's `_components/`, and is promoted only
+once a second page needs it.
 
-Nine client modules total (including `error.tsx` and `about-how-we-work`).
-Everything else is a Server Component.
+`Wordmark` is the exception inside `Marks.tsx`: the other exports are inline
+SVG, but the wordmark is a `next/image` of `public/images/logo.webp`, because
+the lockup is artwork rather than a shape. See
+[Content guide](./content-guide.md#replacing-the-logo).
+
+**Ten client modules**, everything else a Server Component:
+`HeroBackground`, `AboutHowWeWork`, `ContactForm`, `error.tsx`, `SiteHeader`,
+`CountUp`, `IntroBackdrop`, `ScrambleAction`, `use-intro-gate`, `use-scramble`.
 
 ## Data flow
 
@@ -204,6 +217,22 @@ every link gets the hover effect and the correct element type:
 Anchors use the `/#section` form rather than `#section` so they resolve from any
 page, not just home.
 
+### Marking the current page
+
+`SiteHeader` compares `usePathname()` against each nav link and hands
+`ScrambleAction` an `active` flag. The current link rests at the opacity the
+others only reach on hover, so the nav reads as one scale rather than two, and
+`active` sets `aria-current="page"` — without it the only cue is a colour
+change, which a screen reader cannot report.
+
+`/` is compared exactly; every other link also matches its nested paths, so a
+`/studio/<project>` added later keeps Studio marked. Matching `/` by prefix
+would light up every route at once.
+
+The same flag drives the mobile menu. Contact is deliberately left out: it is
+the filled CTA rather than one of the three, and dimming it elsewhere would read
+as disabled.
+
 ## Accessibility baseline
 
 Verified during development and worth preserving:
@@ -215,5 +244,6 @@ Verified during development and worth preserving:
 - Decorative SVG and scrambled glyph text marked `aria-hidden`, with the real
   label in an adjacent `sr-only` span
 - Collapsed header strip marked `inert` so hidden links leave the tab order
+- Current nav link marked `aria-current="page"`, not colour alone
 - `:focus-visible` outline in `--color-primary` at 2px with 3px offset
 - All motion collapses under `prefers-reduced-motion`

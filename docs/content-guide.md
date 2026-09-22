@@ -30,8 +30,8 @@ the copy lives.
 | `shared.ts`     | `clients` *(placeholder)*                                                             |
 
 Copy **not** in these files: section headings and body paragraphs, which sit in
-their section components (`hero.tsx`, `stats.tsx`, `services.tsx`,
-`shared/clients.tsx`, `shared/contact-cta.tsx`).
+their section components (`Hero.tsx`, `Services.tsx`, `Stats.tsx`,
+`Clients.tsx`, `ContactCta.tsx`).
 
 ## Common edits
 
@@ -170,10 +170,33 @@ Absolute URLs resolve through `metadataBase` — see [Deployment](./deployment.m
 
 Drop the file at `public/videos/hero-background.mp4`. Anything in `public/` is
 served from the site root, so that path becomes `/videos/hero-background.mp4`,
-which is what `home/hero-background.tsx` references.
+which is what `app/(home)/_components/HeroBackground.tsx` references.
 
 Keep it **short and small** — see [Deployment](./deployment.md#the-hero-video)
 for why the current file is a problem and how to compress it.
+
+## Replacing the logo
+
+The header and footer wordmark is `public/images/logo.webp`, rendered by
+`Wordmark` in `components/ui/Marks.tsx`. Three things to get right:
+
+**Crop it to the artwork.** Export padding becomes dead space the CSS cannot
+see: the rendered height is stated directly, so any transparent margin pushes
+the logo off the header's content edge and below its optical centre. The
+current file is trimmed to exactly its ink.
+
+**Ship it white on transparent.** The site has one surface — `#000000`, no light
+mode — so a single white lockup covers every placement. There is no dark
+variant to keep in sync.
+
+**Size it by what renders, not by the file.** `width`/`height` on the `<Image>`
+are the intrinsic ratio Next.js uses to reserve space *and* to pick the srcset
+widths, so they carry the rendered size (125×32), not the source's. Set them to
+the source's dimensions and the optimiser ships a full-width image for a 125px
+logo.
+
+Then adjust the rendered height in `Wordmark` — `h-[26px]` on mobile,
+`lg:h-8` from the `lg` breakpoint up.
 
 ## Changing the favicon
 

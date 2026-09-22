@@ -136,7 +136,8 @@ Confirm you hold the rights to any footage you ship.
 - [ ] Placeholder `stats` figures replaced with real numbers
 - [ ] Placeholder `clients` names replaced or the section removed
 - [ ] LinkedIn and X URLs filled in (`footerSocial`)
-- [ ] `hello@kervzent.com` in `shared/contact-cta.tsx` is a real, monitored mailbox
+- [ ] `directEmail` in `lib/content/contact.ts` is a real, monitored mailbox —
+      it is both the "Prefer email?" link and the no-endpoint `mailto` fallback
 - [ ] Privacy Policy and Terms links resolved or removed (`footerLegal`)
 - [ ] `favicon.ico` replaced with Kervzent branding
 - [ ] Open Graph image added (drop `opengraph-image.png` in `src/app/`)

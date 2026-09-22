@@ -227,3 +227,22 @@ them to watch.
 
 The simplest path is copying `app/studio/_components/StudioCover.tsx`, which is already
 wired correctly and is the smallest example.
+
+### Two things the covers do not show
+
+The `pt-6` is the gap under the title, not a fixed part of the recipe — it just
+has to live *inside* the clipped box rather than on the column, or it holds the
+frame open while the row is still at `0fr`. Contact uses `pt-10` for the same
+reason with a different value.
+
+`overflow-hidden` clips focus rings. A paragraph does not care, but anything
+focusable sitting flush with an edge does — the submit button on `/contact`
+would lose the left side of its outline. Widen the clip box without moving the
+content:
+
+```tsx
+<div className="-mx-2 overflow-hidden px-2">
+```
+
+`/contact` is the worked example for both: it runs the identical sequence around
+a form rather than a paragraph.
