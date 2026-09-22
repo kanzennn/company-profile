@@ -5,6 +5,7 @@
 
 /** Placeholder names — replace with real clients before launch. */
 export const clients = [
+  "Anima",
   "Northbeam",
   "Halcyon",
   "Cobalt Row",
