@@ -180,14 +180,28 @@ export function SiteHeader() {
         aria-label="Main"
         /* The glass panel is desktop-only. On mobile the header sits directly
            on the page, and on the full-screen menu it reads as part of the
-           overlay rather than floating over it. */
-        className={`${navReveal} relative z-40 mx-auto flex w-full max-w-400 items-center gap-10 rounded-md p-4 transition-transform ease-out lg:border lg:border-outline/60 lg:bg-surface-tint lg:p-5 lg:backdrop-blur-xl`}
+           overlay rather than floating over it.
+
+           Desktop also lays out as three columns rather than a flex row, so the
+           links sit on the nav's centre line instead of merely halfway between
+           the logo and the button. The two `1fr` tracks stay equal whatever
+           they hold, which is what keeps the middle one centred as the logo or
+           the button changes width. Mobile stays a flex row — both side columns
+           are hidden there, leaving the logo and the toggle. */
+        className={`${navReveal} relative z-40 mx-auto flex w-full max-w-400 items-center gap-10 rounded-md p-4 transition-transform ease-out lg:grid lg:grid-cols-[1fr_auto_1fr] lg:border lg:border-outline/60 lg:bg-surface-tint lg:p-5 lg:backdrop-blur-xl`}
       >
-        <Link href="/" className="shrink-0" aria-label="Kervzent Studio home">
+        {/* `justify-self-start` holds the link to the logo's width; a grid item
+            otherwise stretches across its whole track, making the empty half of
+            it clickable. Inert in the mobile flex row. */}
+        <Link
+          href="/"
+          className="shrink-0 justify-self-start"
+          aria-label="Kervzent Studio home"
+        >
           <Wordmark />
         </Link>
 
-        <div className="ml-auto flex items-center gap-8 max-lg:hidden">
+        <div className="flex items-center gap-8 max-lg:hidden">
           {navLinks.map((link) => (
             <ScrambleAction
               key={link.label}
@@ -197,6 +211,9 @@ export function SiteHeader() {
               className="text-body font-mono opacity-70 transition-opacity hover:opacity-100"
             />
           ))}
+        </div>
+
+        <div className="flex justify-end max-lg:hidden">
           <ScrambleAction
             href={contactLink.href}
             label={contactLink.label}
