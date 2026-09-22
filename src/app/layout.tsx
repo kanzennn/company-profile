@@ -16,24 +16,28 @@ const mono = JetBrains_Mono({
 });
 
 const siteName = "Kervzent Studio";
-const title = "Kervzent Studio — Web, Mobile, and AI Development";
+/* The tab shows the brand alone — the page itself already says what the studio
+   does, so repeating it there only crowds a narrow tab strip. The tagline is
+   kept for shared links, where the preview card arrives with no page around it
+   to supply that context. */
+const shareTitle = "Kervzent Studio — Web, Mobile, and AI Development";
 const description =
   "Kervzent Studio designs and engineers websites, mobile applications, and AI systems — from first prototype to production.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: { default: title, template: `%s — ${siteName}` },
+  title: { default: siteName, template: `%s — ${siteName}` },
   description,
   applicationName: siteName,
   openGraph: {
     type: "website",
     siteName,
-    title,
+    title: shareTitle,
     description,
     locale: "en_US",
     url: "/",
   },
-  twitter: { card: "summary_large_image", title, description },
+  twitter: { card: "summary_large_image", title: shareTitle, description },
   robots: { index: true, follow: true },
 };
 
