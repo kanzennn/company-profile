@@ -252,56 +252,65 @@ export function SiteHeader() {
         </button>
       </nav>
 
-      {open && (
-        <div
-          id="mobile-menu"
-          /* Sits below the header's z-40 so the logo and close button stay on
-             top of it. */
-          className="fixed inset-0 z-30 flex flex-col overflow-y-auto bg-surface px-5 pb-10 pt-32 lg:hidden"
+      {/* Kept mounted rather than rendered on `open`, which is what lets it
+          fade both ways: unmounting on close tears the element out before a
+          transition can run, so the menu would only ever animate in.
+
+          Closed, it is `inert` — links leave the tab order and the whole panel
+          leaves the accessibility tree, the same treatment the collapsed header
+          strip gets — and `pointer-events-none` keeps an invisible full-screen
+          layer from swallowing taps meant for the page. */}
+      <div
+        id="mobile-menu"
+        inert={!open}
+        /* Sits below the header's z-40 so the logo and close button stay on
+           top of it. */
+        className={`fixed inset-0 z-30 flex flex-col overflow-y-auto bg-surface px-5 pb-10 pt-32 transition-opacity duration-300 ease-out lg:hidden ${
+          open ? "opacity-100" : "pointer-events-none opacity-0"
+        }`}
+      >
+        <nav
+          aria-label="Mobile"
+          className="flex flex-col items-center gap-8 pt-6"
         >
-          <nav
-            aria-label="Mobile"
-            className="flex flex-col items-center gap-8 pt-6"
-          >
-            {navLinks.map((link) => (
-              <ScrambleAction
-                key={link.label}
-                href={link.href}
-                label={link.label}
-                onClick={startExit(link.href)}
-                active={isCurrent(link.href)}
-                /* The menu had every link at full strength, which left nothing
+          {navLinks.map((link) => (
+            <ScrambleAction
+              key={link.label}
+              href={link.href}
+              label={link.label}
+              onClick={startExit(link.href)}
+              active={isCurrent(link.href)}
+              /* The menu had every link at full strength, which left nothing
                    to mark the current one. Same scale as the desktop nav. */
-                className={`font-mono text-title tracking-tight transition-opacity ${
-                  isCurrent(link.href) ? "opacity-100" : "opacity-70"
-                }`}
-              />
-            ))}
-          </nav>
+              className={`font-mono text-title tracking-tight transition-opacity ${
+                isCurrent(link.href) ? "opacity-100" : "opacity-70"
+              }`}
+            />
+          ))}
+        </nav>
 
-          <ScrambleAction
-            href={contactLink.href}
-            label={contactLink.label}
-            onClick={() => setOpen(false)}
-            className="mt-12 w-full bg-primary py-4 text-center font-mono text-body transition-colors hover:bg-primary-pressed"
-          />
+        <ScrambleAction
+          href={contactLink.href}
+          label={contactLink.label}
+          onClick={() => setOpen(false)}
+          className="mt-12 w-full bg-primary py-4 text-center font-mono text-body transition-colors hover:bg-primary-pressed"
+        />
 
-          <ul className="mt-12 flex flex-col items-center gap-8">
-            {serviceLinks.map((link) => (
-              <li key={link.name}>
-                <Link
-                  href={link.href}
-                  onClick={() => setOpen(false)}
-                  className="flex items-center gap-3 text-on-surface/60 transition-colors hover:text-on-surface"
-                >
-                  <Glyph id={link.glyph} className="h-6 w-6" />
-                  <span className="text-title tracking-tight">{link.name}</span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+        <ul className="mt-12 flex flex-col items-center gap-8">
+          {serviceLinks.map((link) => (
+            <li key={link.name}>
+              <Link
+                href={link.href}
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-3 text-on-surface/60 transition-colors hover:text-on-surface"
+              >
+                <Glyph id={link.glyph} className="h-6 w-6" />
+                <span className="text-title tracking-tight">{link.name}</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
     </header>
   );
 }
