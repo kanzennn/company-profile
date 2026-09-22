@@ -1,6 +1,6 @@
-import { Wordmark } from "./marks";
-import { ScrambleAction } from "./scramble-action";
-import { footerLegal, footerNav, footerSocial } from "../../_lib/content/navigation";
+import { Wordmark } from "@/components/ui/Marks";
+import { ScrambleAction } from "@/components/ui/ScrambleAction";
+import { footerLegal, footerNav, footerSocial } from "@/lib/content/navigation";
 
 export function SiteFooter() {
   return (

@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { ContactForm } from "../_components/contact/form";
-import { IntroBackdrop } from "../_components/shared/intro-backdrop";
-import { CornerMark } from "../_components/shared/marks";
-import { contactPage } from "../_lib/content/contact";
+import { ContactForm } from "./_components/ContactForm";
+import { IntroBackdrop } from "@/components/ui/IntroBackdrop";
+import { CornerMark } from "@/components/ui/Marks";
+import { contactPage } from "@/lib/content/contact";
 
 export const metadata: Metadata = {
   title: "Contact",

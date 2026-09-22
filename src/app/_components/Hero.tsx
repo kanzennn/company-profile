@@ -1,5 +1,5 @@
-import { HeroBackground } from "./hero-background";
-import { CornerMark } from "../shared/marks";
+import { HeroBackground } from "./HeroBackground";
+import { CornerMark } from "@/components/ui/Marks";
 
 export function Hero() {
   return (

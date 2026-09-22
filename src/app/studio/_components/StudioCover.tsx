@@ -1,6 +1,6 @@
-import { studioCover } from "../../_lib/content/studio";
-import { IntroBackdrop } from "../shared/intro-backdrop";
-import { CornerMark } from "../shared/marks";
+import { studioCover } from "@/lib/content/studio";
+import { IntroBackdrop } from "@/components/ui/IntroBackdrop";
+import { CornerMark } from "@/components/ui/Marks";
 
 export function StudioCover() {
   return (

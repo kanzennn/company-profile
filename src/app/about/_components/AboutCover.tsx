@@ -1,6 +1,6 @@
-import { aboutCover } from "../../_lib/content/about";
-import { IntroBackdrop } from "../shared/intro-backdrop";
-import { CornerMark } from "../shared/marks";
+import { aboutCover } from "@/lib/content/about";
+import { IntroBackdrop } from "@/components/ui/IntroBackdrop";
+import { CornerMark } from "@/components/ui/Marks";
 
 export function AboutCover() {
   return (

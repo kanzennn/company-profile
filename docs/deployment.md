@@ -41,7 +41,7 @@ Modest, but not "any static host":
 | ---------------------- | -------- | --------------------------------------------------- |
 | `NEXT_PUBLIC_SITE_URL` | No       | Absolute base URL for metadata, Open Graph, sitemap |
 
-Resolved in `src/app/_lib/site-url.ts`:
+Resolved in `src/lib/site-url.ts`:
 
 ```
 production   → https://kervzent.kanzen.my.id
@@ -63,7 +63,7 @@ sitemaps and canonical URLs point at the production domain.
 
 `kervzent.kanzen.my.id`
 
-If this changes, update `PRODUCTION_URL` in `_lib/site-url.ts` and the URL in
+If this changes, update `PRODUCTION_URL` in `lib/site-url.ts` and the URL in
 `.env.example`. Nothing else references the domain.
 
 ## Post-deploy verification

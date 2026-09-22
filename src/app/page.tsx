@@ -1,8 +1,8 @@
-import { Clients } from "./_components/shared/clients";
-import { ContactCta } from "./_components/shared/contact-cta";
-import { Hero } from "./_components/home/hero";
-import { Services } from "./_components/home/services";
-import { Stats } from "./_components/shared/stats";
+import { Clients } from "@/components/sections/Clients";
+import { ContactCta } from "@/components/sections/ContactCta";
+import { Hero } from "./_components/Hero";
+import { Services } from "./_components/Services";
+import { Stats } from "@/components/sections/Stats";
 
 export default function Home() {
   return (

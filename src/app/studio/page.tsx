@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import { ContactCta } from "../_components/shared/contact-cta";
-import { StudioCover } from "../_components/studio/cover";
-import { StudioWork } from "../_components/studio/work";
-import { Clients } from "../_components/shared/clients";
-import { studioNote } from "../_lib/content/studio";
+import { ContactCta } from "@/components/sections/ContactCta";
+import { StudioCover } from "./_components/StudioCover";
+import { StudioWork } from "./_components/StudioWork";
+import { Clients } from "@/components/sections/Clients";
+import { studioNote } from "@/lib/content/studio";
 
 export const metadata: Metadata = {
   title: "Studio",

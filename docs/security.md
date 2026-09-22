@@ -96,7 +96,7 @@ findings — one medium, two low — all since fixed:
 | ID    | Finding                                        | Status                                   |
 | ----- | ---------------------------------------------- | ---------------------------------------- |
 | F-001 | No security response headers                   | Fixed — `next.config.ts`                 |
-| F-002 | Base URL fell back to `localhost` in production| Fixed — `_lib/site-url.ts`               |
+| F-002 | Base URL fell back to `localhost` in production| Fixed — `lib/site-url.ts`               |
 | F-003 | `X-Powered-By` disclosed the framework         | Fixed — `poweredByHeader: false`         |
 
 ### Deliberately not a finding

@@ -5,7 +5,7 @@ import {
   contactFields,
   contactPage,
   inquiryCategories,
-} from "../../_lib/content/contact";
+} from "@/lib/content/contact";
 
 /**
  * Posts to `NEXT_PUBLIC_CONTACT_ENDPOINT` when one is configured (any form

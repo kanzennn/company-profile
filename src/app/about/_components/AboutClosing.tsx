@@ -1,6 +1,6 @@
-import { aboutClosing } from "../../_lib/content/about";
-import { AboutBand } from "./band";
-import { ScrambleAction } from "../shared/scramble-action";
+import { aboutClosing } from "@/lib/content/about";
+import { AboutBand } from "./AboutBand";
+import { ScrambleAction } from "@/components/ui/ScrambleAction";
 
 export function AboutClosing() {
   return (

@@ -32,35 +32,54 @@ This shapes two things worth keeping in mind:
 ## File layout
 
 ```
-src/app/
-  _components/          UI components (private — not routable)
-    shared/             Used by more than one page, plus site chrome
-    home/               Home-only sections
-    about/              /about-only sections
-    studio/             /studio-only sections
-    contact/            /contact-only sections
-  _lib/
+src/
+  components/           Shared across routes — PascalCase, one component per file
+    ui/                 Primitives: Marks, ScrambleAction, CountUp, IntroBackdrop
+    layout/             Site chrome: SiteHeader, SiteFooter
+    sections/           Whole sections reused by more than one page
+  lib/                  Non-component code — kebab-case
     content/            Site copy, one file per page
     site-url.ts         Absolute base URL resolution
-  globals.css           Design tokens, keyframes, base styles
-  layout.tsx            Root layout: fonts, metadata, header, footer
-  page.tsx              Home — composes the five sections
-  about/page.tsx        About — story, timeline, team
-  studio/page.tsx       Studio — selected work
-  error.tsx             Route error boundary (client)
-  not-found.tsx         404 page
-  robots.ts             Generated robots.txt
-  sitemap.ts            Generated sitemap.xml
-  favicon.ico           Browser tab icon (file convention)
-public/videos/          Hero background video
+  app/
+    _components/        Home-only sections (home is the root route)
+    about/
+      _components/      /about-only sections
+      page.tsx          About — story, timeline, team
+    studio/
+      _components/      /studio-only sections
+      page.tsx          Studio — selected work
+    contact/
+      _components/      /contact-only sections
+      page.tsx          Contact — the form
+    globals.css         Design tokens, keyframes, base styles
+    layout.tsx          Root layout: fonts, metadata, header, footer
+    page.tsx            Home — composes the five sections
+    error.tsx           Route error boundary (client)
+    not-found.tsx       404 page
+    robots.ts           Generated robots.txt
+    sitemap.ts          Generated sitemap.xml
+    favicon.ico         Browser tab icon (file convention)
+public/
+  images/logo.webp      Header and footer wordmark
+  videos/               Hero background video
 docs/                   This documentation
 audit/                  Dated security audit reports
 ```
 
-`_components/` and `_lib/` use Next.js
+**A component lives next to the route that owns it until a second route needs
+it.** At that point it moves under `src/components/`, into `ui/` if it is a
+primitive, `layout/` if it is site chrome, `sections/` if it is a whole band of
+a page. Nothing under `src/components/` may import from `src/app/`.
+
+The `_components/` folders use Next.js
 [private folders](https://nextjs.org/docs/app/getting-started/project-structure#private-folders).
-The underscore excludes them from routing, which is what lets them live inside
-`src/app/` without becoming URLs.
+The underscore excludes them from routing, which is what lets them sit beside
+`page.tsx` without becoming URLs.
+
+Imports cross folders through the `@/*` alias (`@/components/ui/Marks`,
+`@/lib/content/about`) and stay relative within a route's own folder
+(`./_components/AboutCover`), so an import line says at a glance whether it
+reaches outside the route.
 
 ## Layout composition
 
@@ -135,9 +154,9 @@ duplicated.
 | `count-up`          | yes     | Number animation on scroll into view                      |
 | `marks.tsx`         | no      | `Glyph`, `Wordmark`, `CornerMark`, `CornerMarks` SVGs     |
 
-All of the above live in `_components/shared/`. A component used by exactly one
-page belongs in that page's folder; promote it to `shared/` only once a second
-page needs it.
+All of the above live under `src/components/`. A component used by exactly one
+page belongs in that route's `_components/`; promote it only once a second page
+needs it.
 
 Nine client modules total (including `error.tsx` and `about-how-we-work`).
 Everything else is a Server Component.
@@ -147,7 +166,7 @@ Everything else is a Server Component.
 Content flows one way, from a single module:
 
 ```
-_lib/content/*
+lib/content/*
       │
       ├── SiteHeader      navLinks, serviceLinks, contactLink, introRoutes
       ├── SiteFooter      footerNav, footerSocial, footerLegal

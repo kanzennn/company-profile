@@ -1,6 +1,6 @@
 # Content guide
 
-Nearly all copy lives in `src/app/_lib/content/`, **split one file per page** so
+Nearly all copy lives in `src/lib/content/`, **split one file per page** so
 it's obvious which one to open. Components read from it — none hardcode text.
 
 ## Which file to edit
@@ -16,7 +16,7 @@ it's obvious which one to open. Components read from it — none hardcode text.
 | `types.ts`       | The `GlyphId` union                                         |
 
 There is deliberately **no barrel `index.ts`** — components import from the
-specific file (`_lib/content/about`), so the import line itself tells you where
+specific file (`@/lib/content/about`), so the import line itself tells you where
 the copy lives.
 
 ### Exports by file
@@ -82,7 +82,7 @@ export const stats = [
 ```ts
 {
   name: "Web Development",
-  glyph: "web",                    // GlyphId — see shared/marks.tsx
+  glyph: "web",                    // GlyphId — see components/ui/Marks.tsx
   description: "…",
   href: "#contact",
   action: "Start a Project",
@@ -90,7 +90,7 @@ export const stats = [
 }
 ```
 
-`glyph` must be a key in the `paths` record in `_components/shared/marks.tsx`. To add a
+`glyph` must be a key in the `paths` record in `components/ui/Marks.tsx`. To add a
 new icon, add a path there and extend the `GlyphId` union in `content/types.ts`.
 
 `tint` is the card's gradient hue. It's a raw hex rather than a token because
@@ -98,17 +98,17 @@ it's decorative per-card variation, not a semantic colour role.
 
 ## Adding a page
 
-1. **Create the route**, and a folder for its sections under `_components/`.
+1. **Create the route**, with its own `_components/` folder beside `page.tsx`.
    `studio/` is the smallest existing page to copy from:
 
 ```tsx
 // src/app/careers/page.tsx
 import type { Metadata } from "next";
-import { CareersCover } from "../_components/careers/cover";
-import { ContactCta } from "../_components/shared/contact-cta";
+import { CareersCover } from "./_components/CareersCover";
+import { ContactCta } from "@/components/sections/ContactCta";
 
 export const metadata: Metadata = {
-  title: "Careers",                 // becomes "Careers — Kervzent Studio"
+  title: "Careers",                 // becomes "Careers | Kervzent Studio"
   description: "…",
 };
 
@@ -122,9 +122,10 @@ export default function CareersPage() {
 }
 ```
 
-Sections used by this page only go in `_components/careers/`. Reach into
-`_components/shared/` for anything already used elsewhere, and only move a
-component there once a second page actually needs it.
+Sections used by this page only go in `careers/_components/`, named after the
+component they export. Reach into `@/components/` for anything already used
+elsewhere, and only move a component there once a second page actually needs
+it.
 
 2. **Register it in `introRoutes`** — this is the easy step to miss:
 

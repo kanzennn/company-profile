@@ -3,14 +3,14 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
-import { Glyph, Wordmark } from "./marks";
-import { ScrambleAction } from "./scramble-action";
+import { Glyph, Wordmark } from "@/components/ui/Marks";
+import { ScrambleAction } from "@/components/ui/ScrambleAction";
 import {
   contactLink,
   introRoutes,
   navLinks,
   serviceLinks,
-} from "../../_lib/content/navigation";
+} from "@/lib/content/navigation";
 
 /* Long enough for the strip to clear and the nav to finish sliding out. */
 const EXIT_MS = 550;

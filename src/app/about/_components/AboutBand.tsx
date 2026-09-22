@@ -1,4 +1,4 @@
-import { CornerMarks } from "../shared/marks";
+import { CornerMarks } from "@/components/ui/Marks";
 
 /**
  * Full-bleed wide banner that breaks up the text sections. Uses the site's

@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
-import { AboutBand } from "../_components/about/band";
-import { AboutClosing } from "../_components/about/closing";
-import { AboutCover } from "../_components/about/cover";
-import { AboutHowWeWork } from "../_components/about/how-we-work";
-import { AboutStory } from "../_components/about/story";
-import { AboutTeam } from "../_components/about/team";
-import { AboutTimeline } from "../_components/about/timeline";
-import { Clients } from "../_components/shared/clients";
-import { Stats } from "../_components/shared/stats";
-import { aboutBand } from "../_lib/content/about";
+import { AboutBand } from "./_components/AboutBand";
+import { AboutClosing } from "./_components/AboutClosing";
+import { AboutCover } from "./_components/AboutCover";
+import { AboutHowWeWork } from "./_components/AboutHowWeWork";
+import { AboutStory } from "./_components/AboutStory";
+import { AboutTeam } from "./_components/AboutTeam";
+import { AboutTimeline } from "./_components/AboutTimeline";
+import { Clients } from "@/components/sections/Clients";
+import { Stats } from "@/components/sections/Stats";
+import { aboutBand } from "@/lib/content/about";
 
 export const metadata: Metadata = {
   title: "About",

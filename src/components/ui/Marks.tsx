@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-import type { GlyphId } from "../../_lib/content/types";
+import type { GlyphId } from "@/lib/content/types";
 
 const paths: Record<GlyphId, React.ReactNode> = {
   web: (

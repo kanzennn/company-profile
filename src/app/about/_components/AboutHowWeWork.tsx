@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { howWeWork } from "../../_lib/content/about";
-import { CornerMarks } from "../shared/marks";
+import { howWeWork } from "@/lib/content/about";
+import { CornerMarks } from "@/components/ui/Marks";
 
 const steps = howWeWork.steps;
 

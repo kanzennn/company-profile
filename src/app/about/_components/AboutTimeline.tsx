@@ -1,4 +1,4 @@
-import { timeline } from "../../_lib/content/about";
+import { timeline } from "@/lib/content/about";
 
 export function AboutTimeline() {
   return (

@@ -1,4 +1,4 @@
-import { aboutStory } from "../../_lib/content/about";
+import { aboutStory } from "@/lib/content/about";
 
 export function AboutStory() {
   return (

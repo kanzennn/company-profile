@@ -1,5 +1,5 @@
-import { CountUp } from "./count-up";
-import { stats } from "../../_lib/content/home";
+import { CountUp } from "@/components/ui/CountUp";
+import { stats } from "@/lib/content/home";
 
 export function Stats() {
   return (

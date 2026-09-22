@@ -31,17 +31,28 @@ The site runs at http://localhost:3000.
 ## Structure
 
 ```
-src/app/
-  _components/     UI components, grouped by page + shared/
-  _lib/            Site content, copy, and URL resolution
-  globals.css      Design tokens, keyframes, base styles
-  layout.tsx       Root layout: fonts, metadata, header, footer
-  page.tsx         Home — composes the five sections
-  about/, studio/  About and Studio pages
+src/
+  components/      Shared across routes
+    ui/            Primitives — Marks, ScrambleAction, CountUp, IntroBackdrop
+    layout/        Site chrome — SiteHeader, SiteFooter
+    sections/      Sections reused by more than one page
+  lib/             Site content, copy, and URL resolution
+  app/
+    _components/   Home-only sections (home is the root route)
+    about/         page.tsx + its own _components/
+    studio/        page.tsx + its own _components/
+    contact/       page.tsx + its own _components/
+    globals.css    Design tokens, keyframes, base styles
+    layout.tsx     Root layout: fonts, metadata, header, footer
+    page.tsx       Home — composes the five sections
 docs/              Documentation
 audit/             Security audit reports
-public/videos/     Hero background video
+public/            Logo and hero background video
 ```
+
+Components are PascalCase and named after the component they export; everything
+under `lib/` is kebab-case. A section stays in its route's `_components/` until
+a second route needs it. Cross-folder imports go through the `@/*` alias.
 
 ## Documentation
 

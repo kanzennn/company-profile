@@ -1,5 +1,5 @@
-import { CornerMarks } from "./marks";
-import { ScrambleAction } from "./scramble-action";
+import { CornerMarks } from "@/components/ui/Marks";
+import { ScrambleAction } from "@/components/ui/ScrambleAction";
 
 export function ContactCta() {
   return (

@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { JetBrains_Mono, Space_Grotesk } from "next/font/google";
-import { SiteFooter } from "./_components/shared/site-footer";
-import { SiteHeader } from "./_components/shared/site-header";
-import { siteUrl } from "./_lib/site-url";
+import { SiteFooter } from "@/components/layout/SiteFooter";
+import { SiteHeader } from "@/components/layout/SiteHeader";
+import { siteUrl } from "@/lib/site-url";
 import "./globals.css";
 
 const sans = Space_Grotesk({

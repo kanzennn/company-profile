@@ -1,5 +1,5 @@
-import { projects } from "../../_lib/content/studio";
-import { CornerMarks, Glyph } from "../shared/marks";
+import { projects } from "@/lib/content/studio";
+import { CornerMarks, Glyph } from "@/components/ui/Marks";
 
 function CardBackdrop({ tint }: { tint: string }) {
   return (

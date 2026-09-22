@@ -25,14 +25,14 @@ intro/exit animation system driven by four `<html>` data attributes.
 
 ## Conventions worth knowing up front
 
-**Content is data, not markup.** Copy lives in `src/app/_lib/content/`, one file per page, not
+**Content is data, not markup.** Copy lives in `src/lib/content/`, one file per page, not
 inside components. Edit it there and every consumer updates.
 
 **Use semantic tokens, never raw values.** Write `bg-primary` and `text-display`
 rather than `bg-[#ff5623]` or `text-[60px]`, so a token change propagates.
 
-**`_`-prefixed folders are private.** `_components/` and `_lib/` are excluded
-from routing by Next.js, which is why they can sit inside `src/app/` without
+**`_`-prefixed folders are private.** A route's `_components/` folder is excluded
+from routing by Next.js, which is why it can sit beside `page.tsx` without
 becoming URLs.
 
 **Animation state lives on `<html>`.** Four data attributes coordinate the

@@ -1,5 +1,5 @@
-import { team } from "../../_lib/content/about";
-import { CornerMarks } from "../shared/marks";
+import { team } from "@/lib/content/about";
+import { CornerMarks } from "@/components/ui/Marks";
 
 function initials(name: string) {
   return name

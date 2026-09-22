@@ -1,6 +1,6 @@
 "use client";
 
-import { ScrambleAction } from "./_components/shared/scramble-action";
+import { ScrambleAction } from "@/components/ui/ScrambleAction";
 
 export default function Error({ reset }: { reset: () => void }) {
   return (
