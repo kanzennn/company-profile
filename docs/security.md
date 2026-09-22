@@ -45,6 +45,27 @@ object-src 'none'
 upgrade-insecure-requests              [production only]
 ```
 
+### SVG gets a stricter policy of its own
+
+Client logos arrive as `.svg` and are served from `public/`. SVG is markup, not
+a picture: an `<img>` never runs script inside one, but opening the file's URL
+directly renders it as a **document in this origin**, where the `'unsafe-inline'`
+above would let an inline `<script>` run. A logo handed over by a third party is
+therefore treated as untrusted markup.
+
+A second `headers()` entry narrows the policy for those paths only — Next.js
+resolves duplicate header keys last-match-wins, so the narrower rule is listed
+second:
+
+```
+# for /:path(.*\.svg)
+default-src 'none'; style-src 'unsafe-inline'; sandbox
+```
+
+`style-src` stays open because logos legitimately carry a `<style>` block and
+stylesheets cannot execute. Rendering is unaffected — a response CSP applies to
+a document context, not to a subresource — so the cards still show their logos.
+
 **It is environment-aware, and it has to be.** Next.js development needs
 `'unsafe-eval'` for HMR and websocket origins for Fast Refresh; a strict policy
 breaks the dev server outright. `upgrade-insecure-requests` is production-only
@@ -90,14 +111,20 @@ HSTS is inert until TLS is live — browsers ignore the header over plain HTTP.
 
 A full OWASP Top 10 (2025) audit lives in `audit/<timestamp>/report.md`.
 
-**Result:** no critical, high, or exploitable findings. Three configuration
-findings — one medium, two low — all since fixed:
+**Result across all audits to date:** no critical or high findings. Every
+finding raised has been fixed:
 
-| ID    | Finding                                        | Status                                   |
-| ----- | ---------------------------------------------- | ---------------------------------------- |
-| F-001 | No security response headers                   | Fixed — `next.config.ts`                 |
-| F-002 | Base URL fell back to `localhost` in production| Fixed — `lib/site-url.ts`               |
-| F-003 | `X-Powered-By` disclosed the framework         | Fixed — `poweredByHeader: false`         |
+| ID    | Audit      | Finding                                         | Status                                   |
+| ----- | ---------- | ----------------------------------------------- | ---------------------------------------- |
+| F-001 | 2026-09-20 | No security response headers                    | Fixed — `next.config.ts`                 |
+| F-002 | 2026-09-20 | Base URL fell back to `localhost` in production | Fixed — `lib/site-url.ts`                |
+| F-003 | 2026-09-20 | `X-Powered-By` disclosed the framework          | Fixed — `poweredByHeader: false`         |
+| F-001 | 2026-09-22 | SVG logos served as documents under the page policy | Fixed — SVG `headers()` rule above   |
+
+The 2026-09-22 audit was prompted by the Studio section starting to accept
+client logos as SVG. Seven of the ten OWASP categories are not reachable at all:
+the site is static, with no route handlers, server actions, database,
+authentication or session state.
 
 ### Deliberately not a finding
 

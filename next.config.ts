@@ -68,10 +68,34 @@ const securityHeaders = [
   },
 ];
 
+/**
+ * SVG is markup, not a picture. An `<img>` never runs script inside one, but a
+ * direct hit on `/images/work/<client>/logo.svg` renders it as a *document* in
+ * this origin — where the `unsafe-inline` in `script-src` above would happily
+ * run an inline `<script>` the file carried in.
+ *
+ * Client logos arrive as SVG from outside this repo, so the format is treated
+ * as untrusted markup: its own document context gets nothing. `sandbox` alone
+ * would do it, but `default-src 'none'` states the intent. `style-src` stays
+ * open because logos legitimately carry a `<style>` block, and styles cannot
+ * execute. None of this touches `<img>` rendering, where a response CSP does
+ * not apply.
+ */
+const svgDocumentHeaders = [
+  {
+    key: "Content-Security-Policy",
+    value: "default-src 'none'; style-src 'unsafe-inline'; sandbox",
+  },
+];
+
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   async headers() {
-    return [{ source: "/:path*", headers: securityHeaders }];
+    return [
+      { source: "/:path*", headers: securityHeaders },
+      // Last match wins per key, so this narrows the policy above for SVG only.
+      { source: "/:path(.*\.svg)", headers: svgDocumentHeaders },
+    ];
   },
 };
 
