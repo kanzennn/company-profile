@@ -1,7 +1,7 @@
 export const contactPage = {
   title: "Tell us what you're building.",
   /** Shown under the form as a plain alternative to filling it in. */
-  directEmail: "kerventstudio@gmail.com",
+  directEmail: "kervzentstudio@gmail.com",
 };
 
 export const inquiryCategories = [
