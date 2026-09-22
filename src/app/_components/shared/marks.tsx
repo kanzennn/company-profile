@@ -1,9 +1,8 @@
+import Image from "next/image";
+
 import type { GlyphId } from "../../_lib/content/types";
 
 const paths: Record<GlyphId, React.ReactNode> = {
-  kervzent: (
-    <path d="M4 2h6.4v11.1L21.2 2H29L18.4 13.9 29 30h-7.6l-7.4-11.2-3.6 3.9V30H4V2Z" />
-  ),
   web: (
     <>
       <path d="M2 4h28v24H2V4Zm2.4 6.4v15.2h23.2V10.4H4.4Z" />
@@ -40,17 +39,31 @@ export function Glyph({ id, className }: { id: GlyphId; className?: string }) {
   );
 }
 
+/**
+ * The whole lockup — mark, "Kervzent", and "Studio" set beneath it — lives in
+ * the artwork, so nothing here is live text; `alt` carries the name instead.
+ * The file is cropped to its ink, which is what lets the rendered height be
+ * stated plainly rather than padded around. `w-auto` keeps the ratio, and
+ * `self-start` stops a column flex parent (the footer) from stretching a
+ * height-constrained image sideways.
+ *
+ * `width`/`height` are the intrinsic ratio Next uses to reserve space and to
+ * pick the srcset widths — deliberately the rendered size, not the source's
+ * 1618x415, so the optimizer emits a ~125px logo and its 2x rather than a
+ * full-width one.
+ */
 export function Wordmark({ className }: { className?: string }) {
   return (
-    <span className={`flex items-center gap-3 ${className ?? ""}`}>
-      <Glyph id="kervzent" className="h-7 w-7 shrink-0 text-primary" />
-      <span className="text-title font-medium tracking-[-0.04em] lg:text-[1.75rem]">
-        Kervzent
-      </span>
-      <span className="font-mono text-label uppercase tracking-[0.3em] opacity-60">
-        Studio
-      </span>
-    </span>
+    <Image
+      src="/images/logo.webp"
+      alt="Kervzent Studio"
+      width={125}
+      height={32}
+      // Header-first and only a couple of kilobytes once optimised, so there is
+      // nothing to gain from deferring it behind the viewport check.
+      loading="eager"
+      className={`h-[26px] w-auto self-start lg:h-8 ${className ?? ""}`}
+    />
   );
 }
 
