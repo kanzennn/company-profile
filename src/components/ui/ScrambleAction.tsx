@@ -13,6 +13,7 @@ export function ScrambleAction({
   className,
   onClick,
   context,
+  active,
 }: {
   label: string;
   href?: string;
@@ -23,6 +24,10 @@ export function ScrambleAction({
   onClick?: (event: React.MouseEvent<HTMLElement>) => void;
   /** Distinguishes otherwise identical labels for screen readers. */
   context?: string;
+  /** Marks this as the page currently being viewed. Styling stays with the
+   *  caller — this only carries the meaning to assistive tech, which would
+   *  otherwise have nothing but a colour change to go on. */
+  active?: boolean;
 }) {
   const { display, scramble } = useScramble(label);
 
@@ -36,7 +41,12 @@ export function ScrambleAction({
       <span aria-hidden>{display}</span>
     </>
   );
-  const shared = { className, onMouseEnter: scramble, onFocus: scramble };
+  const shared = {
+    className,
+    onMouseEnter: scramble,
+    onFocus: scramble,
+    "aria-current": active ? ("page" as const) : undefined,
+  };
 
   if (href === undefined) {
     return (

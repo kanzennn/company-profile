@@ -135,6 +135,14 @@ export function SiteHeader() {
       scrollFallback.current = window.setTimeout(settle, SCROLL_SETTLE_MAX_MS);
     };
 
+  /* `/` would prefix-match every route, so it is the one link compared
+     exactly; the rest also light up on their nested pages, should any appear
+     later (`/studio/a-project` keeps Studio marked). */
+  const isCurrent = (href: string) =>
+    href === "/"
+      ? pathname === "/"
+      : pathname === href || pathname.startsWith(`${href}/`);
+
   // Entry runs nav first, then the strip. Exit reverses that: the strip clears
   // before the nav slides away, so the two don't leave at once.
   const stripReveal = leaving
@@ -208,7 +216,12 @@ export function SiteHeader() {
               href={link.href}
               label={link.label}
               onClick={startExit(link.href)}
-              className="text-body font-mono opacity-70 transition-opacity hover:opacity-100"
+              active={isCurrent(link.href)}
+              /* The current page rests at the opacity the others reach on
+                 hover, so the nav reads as one scale rather than two. */
+              className={`text-body font-mono transition-opacity hover:opacity-100 ${
+                isCurrent(link.href) ? "opacity-100" : "opacity-70"
+              }`}
             />
           ))}
         </div>
@@ -256,7 +269,12 @@ export function SiteHeader() {
                 href={link.href}
                 label={link.label}
                 onClick={startExit(link.href)}
-                className="font-mono text-title tracking-tight"
+                active={isCurrent(link.href)}
+                /* The menu had every link at full strength, which left nothing
+                   to mark the current one. Same scale as the desktop nav. */
+                className={`font-mono text-title tracking-tight transition-opacity ${
+                  isCurrent(link.href) ? "opacity-100" : "opacity-70"
+                }`}
               />
             ))}
           </nav>
