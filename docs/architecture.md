@@ -41,7 +41,9 @@ src/
     content/            Site copy, one file per page
     site-url.ts         Absolute base URL resolution
   app/
-    _components/        Home-only sections (home is the root route)
+    (home)/             Route group — the parentheses keep it out of the URL
+      _components/      Home-only sections
+      page.tsx          Home — composes the five sections
     about/
       _components/      /about-only sections
       page.tsx          About — story, timeline, team
@@ -53,9 +55,8 @@ src/
       page.tsx          Contact — the form
     globals.css         Design tokens, keyframes, base styles
     layout.tsx          Root layout: fonts, metadata, header, footer
-    page.tsx            Home — composes the five sections
     error.tsx           Route error boundary (client)
-    not-found.tsx       404 page
+    not-found.tsx       404 page — also catches every unmatched URL
     robots.ts           Generated robots.txt
     sitemap.ts          Generated sitemap.xml
     favicon.ico         Browser tab icon (file convention)
@@ -70,6 +71,17 @@ audit/                  Dated security audit reports
 it.** At that point it moves under `src/components/`, into `ui/` if it is a
 primitive, `layout/` if it is site chrome, `sections/` if it is a whole band of
 a page. Nothing under `src/components/` may import from `src/app/`.
+
+Home sits in the `(home)` [route group](https://nextjs.org/docs/app/api-reference/file-conventions/route-groups)
+so its sections get a folder of their own instead of sharing `app/_components`
+with the app root. Parenthesised folders are dropped from the URL, so the route
+is still `/` — `/home` is a 404.
+
+Only `page.tsx` and its `_components/` moved into the group. `layout.tsx`,
+`error.tsx`, `not-found.tsx`, `robots.ts` and `sitemap.ts` stay at the `app/`
+root, because each of them is scoped to the segment it sits in: the root
+`not-found.tsx` is what Next.js serves for **any** unmatched URL, and inside a
+group it would only cover that group.
 
 The `_components/` folders use Next.js
 [private folders](https://nextjs.org/docs/app/getting-started/project-structure#private-folders).

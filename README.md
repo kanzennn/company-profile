@@ -38,13 +38,12 @@ src/
     sections/      Sections reused by more than one page
   lib/             Site content, copy, and URL resolution
   app/
-    _components/   Home-only sections (home is the root route)
+    (home)/        Home — route group, dropped from the URL, so this is `/`
     about/         page.tsx + its own _components/
     studio/        page.tsx + its own _components/
     contact/       page.tsx + its own _components/
     globals.css    Design tokens, keyframes, base styles
     layout.tsx     Root layout: fonts, metadata, header, footer
-    page.tsx       Home — composes the five sections
 docs/              Documentation
 audit/             Security audit reports
 public/            Logo and hero background video
