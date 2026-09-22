@@ -142,7 +142,7 @@ navigation, that state survives the route change. See
 | Component     | Section id | Notes                                       |
 | ------------- | ---------- | ------------------------------------------- |
 | `StudioCover` | `#cover`   | Same treatment as the home hero              |
-| `StudioWork`  | `#work`    | Six project cards, tinted gradient backdrops |
+| `StudioWork`  | `#work`    | Six project cards — a screenshot behind a scrim where the project has one, a tinted gradient otherwise |
 
 ### Page sections (contact)
 

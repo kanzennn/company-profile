@@ -163,6 +163,42 @@ state on a prop change. An effect would paint the stale frame first.
 what makes this state survive the route change — and also why a stale flag is so
 easy to get wrong here.
 
+## The work card hover
+
+Each card in Selected Work answers a hover with three things moving at once,
+over 500ms:
+
+| Element      | At rest        | On hover        |
+| ------------ | -------------- | --------------- |
+| Backdrop     | fills the card | `scale-75`      |
+| Corner marks | `scale-75`, `opacity-0` | `scale-100`, `opacity-100` |
+| Practice glyph | —            | `scale-110`     |
+
+**The marks sit under the backdrop, not over it.** They are rendered first and
+carry `z-0` against the backdrop's `z-1`, so at rest the backdrop covers them
+completely. On hover it pulls in and *uncovers* the band they occupy — they read
+as having been behind the image all along rather than fading in on top of it.
+Measured at a 662×473 card: the backdrop drops to 497×355, leaving 83px of band
+horizontally and 59px vertically, and the marks extend into exactly that.
+
+A project **logo deliberately has no hover scale**, unlike the practice glyph it
+replaces: it is the client's artwork, and the card already answers the hover
+twice over.
+
+## The mobile menu fade
+
+The full-screen menu fades over 300ms in both directions. That is only possible
+because it stays **mounted** — rendering it on `open` tears the element out
+before a transition can run, so it would animate in and then vanish instantly.
+
+Staying mounted costs two things, both of which are load-bearing:
+
+- **`inert` when closed** — its links leave the tab order and the whole panel
+  leaves the accessibility tree. The collapsed header strip gets the same
+  treatment.
+- **`pointer-events-none` when closed** — without it, an invisible full-screen
+  layer swallows every tap meant for the page.
+
 ## Hover scramble
 
 `useScramble` resolves text left-to-right out of random glyphs:

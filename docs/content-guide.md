@@ -26,8 +26,8 @@ the copy lives.
 | `navigation.ts` | `serviceLinks`, `navLinks`, `contactLink`, `introRoutes`, `footerNav`, `footerSocial`, `footerLegal` |
 | `home.ts`       | `stats` *(placeholder)*, `services`, `customWork`                                     |
 | `about.ts`      | `aboutCover`, `aboutStory`, `aboutBand`, `timeline` *(placeholder)*, `howWeWork`, `team` *(placeholder)*, `aboutClosing` |
-| `studio.ts`     | `studioCover`, `projects` *(placeholder)*, `studioNote`                               |
-| `shared.ts`     | `clients` *(placeholder)*                                                             |
+| `studio.ts`     | `studioCover`, `projects` *(Anima real, five placeholders)*, `studioNote`             |
+| `shared.ts`     | `clients` *(Anima real, eight placeholders)*                                          |
 
 Copy **not** in these files: section headings and body paragraphs, which sit in
 their section components (`Hero.tsx`, `Services.tsx`, `Stats.tsx`,
@@ -75,7 +75,7 @@ export const stats = [
 
 > **These are placeholder figures.** They were invented to fill the layout.
 > Replace them with real numbers before the site goes public. The same applies
-> to the eight names in `clients` — they are not real clients.
+> to the placeholder names in `clients` — only Anima is a real client.
 
 ### Services
 
@@ -95,6 +95,54 @@ new icon, add a path there and extend the `GlyphId` union in `content/types.ts`.
 
 `tint` is the card's gradient hue. It's a raw hex rather than a token because
 it's decorative per-card variation, not a semantic colour role.
+
+## Adding a project to Selected Work
+
+A project in `studio.ts` needs only the first five fields. The last three turn
+the card from a tinted placeholder into real work:
+
+```ts
+{
+  name: "Anima",
+  practice: "Web Development",     // Web Development | Mobile Apps | AI Development
+  glyph: "web",                    // used only when there is no `logo`
+  description: "A marketing landing page for a motion design tool, …",
+  tint: "#4f7cff",                 // used only when there is no `image`
+  image: "/images/work/anima/screenshot.webp",
+  logo: "/images/work/anima/logo.svg",
+  logoIncludesName: true,
+}
+```
+
+One folder per project keeps the pair together: `public/images/work/<project>/`.
+
+**`image` — the screenshot.** WebP, and wide enough for a full-width card on a
+tablet: the cards go to a single column below `lg`, so a card can be ~970 CSS px
+and wants roughly 1900px of source to stay sharp on a retina screen. It sits
+behind a 6px blur and a dark scrim, so fine detail is lost anyway — legibility
+of the card's own text matters more than legibility of the screenshot.
+
+> **The scrim strength is a live trade-off.** It currently sits at 50%, which
+> keeps the screenshot clearly visible but leaves the practice label and the
+> description at 2.43:1 and 2.75:1 against the brightest parts of a light
+> screenshot — under the 4.5:1 WCAG AA floor. 75% is the lowest value that
+> clears it for both. Raising the text opacity does not help: even pure white
+> only reaches 3.86:1 at a 50% scrim, because the scrim is what binds. Prefer a
+> darker screenshot if you want the image to stay prominent.
+
+**`logo` — the client's mark.** SVG, and **white on transparent**. The card is
+near-black; a logo in brand colours is usually dark and simply disappears. SVG
+also beats a raster here on both counts that matter — the Anima lockup is 2.7 KB
+gzipped against 18 KB for a WebP of the same mark, and stays sharp at any size.
+Convert any wordmark to outlines: an SVG loaded through `<img>` cannot fetch a
+web font, so `<text>` renders in whatever the visitor happens to have installed.
+
+**`logoIncludesName`** — set it when the logo is a lockup that already spells the
+name out. The card then stops printing the name below it. The heading is hidden
+rather than removed, so screen readers still announce it.
+
+Leave `image` or `logo` out and the card falls back to the gradient or the
+practice glyph, which is what lets real work and placeholders share one grid.
 
 ## Adding a page
 
